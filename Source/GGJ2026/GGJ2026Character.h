@@ -48,9 +48,13 @@ protected:
 	/** Mouse Look Input Action */
 	UPROPERTY(EditAnywhere, Category ="Input")
 	class UInputAction* MouseLookAction;
+
+	UPROPERTY(EditAnywhere, Category="Input")
+	UInputAction* InteractAction;
 	
 public:
 	AGGJ2026Character();
+	virtual void Tick(float DeltaSeconds) override;
 
 protected:
 
@@ -89,6 +93,31 @@ public:
 
 	/** Returns first person camera component **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+
+public:
+	
+	UPROPERTY(EditDefaultsOnly, Category="Interactable")
+	float MaxInteractDistance = 300.f;
+	UPROPERTY(EditAnywhere, Category="Interactable")
+	TWeakObjectPtr<AActor> CurrentInteractable;
+	UPROPERTY(EditAnywhere, Category="Interactable")
+	TWeakObjectPtr<AActor> LastInteractable;
+
+	UFUNCTION()
+	void UpdateInteractable();
+	UFUNCTION()
+	bool TraceForInteractable(FHitResult& OutHit);
+
+	void OnStartLookingInteractable(AActor* Actor);
+	void OnStopLookingInteractable(AActor* Actor);
+	void TryInteract();
+	void ShowInteractWidget(bool Show);
+
+	bool IsMaskActive() const { return MaskActive; };
+
+private:
+	UPROPERTY(EditAnywhere)
+	bool MaskActive = false;
 
 };
 
