@@ -9,6 +9,7 @@
 #include "InputActionValue.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GGJ2026.h"
+#include "Interactable/IInteractable.h"
 
 AGGJ2026Character::AGGJ2026Character()
 {
@@ -44,6 +45,12 @@ AGGJ2026Character::AGGJ2026Character()
 	GetCharacterMovement()->AirControl = 0.5f;
 }
 
+void AGGJ2026Character::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	UpdateInteractable();
+}
+
 void AGGJ2026Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {	
 	// Set up action bindings
@@ -59,6 +66,7 @@ void AGGJ2026Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		// Looking/Aiming
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AGGJ2026Character::LookInput);
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &AGGJ2026Character::LookInput);
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AGGJ2026Character::TryInteract);
 	}
 	else
 	{
@@ -117,4 +125,87 @@ void AGGJ2026Character::DoJumpEnd()
 {
 	// pass StopJumping to the character
 	StopJumping();
+}
+
+void AGGJ2026Character::UpdateInteractable()
+{
+	LastInteractable = CurrentInteractable;
+	CurrentInteractable = nullptr;
+
+	FHitResult Hit;
+	if (TraceForInteractable(Hit))
+	{
+		AActor* HitActor = Hit.GetActor();
+
+		if (HitActor && HitActor -> GetClass()-> ImplementsInterface(UInteractable::StaticClass()))
+		{
+			CurrentInteractable = HitActor;
+		}
+	}
+	
+	if (LastInteractable != CurrentInteractable)
+	{
+		if (LastInteractable.IsValid())
+		{
+			OnStopLookingInteractable(LastInteractable.Get());
+		}
+		if (CurrentInteractable.IsValid())
+		{
+			OnStartLookingInteractable(CurrentInteractable.Get());
+		}
+	}
+}
+
+bool AGGJ2026Character::TraceForInteractable(FHitResult& OutHit)
+{
+	FVector Start;
+	FRotator Rot;
+	Controller -> GetPlayerViewPoint(Start, Rot);
+
+	FVector End = Start + Rot.Vector() * MaxInteractDistance;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	//Params.bTraceComplex = false;
+
+	bool Hit = GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, Params);
+
+#if WITH_EDITOR
+	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 0.05f, 0, 1.f);
+#endif
+
+	return Hit;
+}
+
+void AGGJ2026Character::TryInteract()
+{
+	UE_LOG(LogTemp, Warning, TEXT("AShooterCharacter::TryInteract"));
+	
+	if (CurrentInteractable.IsValid())
+		UE_LOG(LogTemp, Warning, TEXT("CurrentInteract %s"), *CurrentInteractable->GetName());
+	
+	if (!CurrentInteractable.IsValid()) return;
+	
+	AActor* Actor = CurrentInteractable.Get();
+	
+	if (Actor -> GetClass()->ImplementsInterface(UInteractable::StaticClass()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Sent Interact"));
+		IInteractable::Execute_Interact(Actor, this);
+	}
+}
+
+void AGGJ2026Character::ShowInteractWidget(bool Show)
+{
+}
+
+void AGGJ2026Character::OnStartLookingInteractable(AActor* Actor)
+{
+	if (!IsValid(Actor)) return;
+	ShowInteractWidget(true);
+}
+
+void AGGJ2026Character::OnStopLookingInteractable(AActor* Actor)
+{
+	if (!IsValid(Actor)) return;
+	ShowInteractWidget(false);
 }
