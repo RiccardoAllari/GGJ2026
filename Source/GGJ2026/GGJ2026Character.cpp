@@ -10,6 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GGJ2026.h"
 #include "Interactable/IInteractable.h"
+#include "Kismet/GameplayStatics.h"
 
 AGGJ2026Character::AGGJ2026Character()
 {
@@ -67,6 +68,7 @@ void AGGJ2026Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AGGJ2026Character::LookInput);
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &AGGJ2026Character::LookInput);
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AGGJ2026Character::TryInteract);
+		EnhancedInputComponent->BindAction(ActivateMaskAction, ETriggerEvent::Triggered, this, &AGGJ2026Character::ActivateMask);
 	}
 	else
 	{
@@ -208,4 +210,37 @@ void AGGJ2026Character::OnStopLookingInteractable(AActor* Actor)
 {
 	if (!IsValid(Actor)) return;
 	ShowInteractWidget(false);
+}
+void AGGJ2026Character::ActivateMask()
+{
+	if (!HasMask) return;
+	MaskActive = !MaskActive;
+	OnMaskStatusChange.Broadcast(MaskActive);
+
+	if (MaskActive)
+	{
+		GetWorldTimerManager().SetTimer(MaskTimerHandle, this, &AGGJ2026Character::UpdateMaskTimer, 0.05f, true);
+	}
+	else
+	{
+		GetWorldTimerManager().ClearTimer(MaskTimerHandle);
+	}
+}
+
+void AGGJ2026Character::UpdateMaskTimer()
+{
+	MaskTimer += 0.05f; // same as timer tick
+	UE_LOG(LogTemp, Warning, TEXT("MaskTimer: %f"), MaskTimer);
+	// Broadcast progress (0 to 1) for UI
+	float Progress = FMath::Clamp(MaskTimer / MaxMaskTime, 0.f, 1.f);
+	//OnMaskProgress.Broadcast(Progress); // Optional: bind to progress bar
+
+	if (MaskTimer >= MaxMaskTime)
+	{
+		GetWorldTimerManager().ClearTimer(MaskTimerHandle);
+
+		UE_LOG(LogTemp, Warning, TEXT("GAME OVER: Mask Timer reached max"));
+		// Trigger your Game Over logic here
+		//UGameplayStatics::OpenLevel(this, FName("GameOverLevel"));
+	}
 }
