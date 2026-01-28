@@ -13,11 +13,8 @@ class UCameraComponent;
 class UInputAction;
 struct FInputActionValue;
 
-DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaskStatusChange, bool, MaskStatus);
 
-/**
- *  A basic first person character
- */
 UCLASS(abstract)
 class AGGJ2026Character : public ACharacter
 {
@@ -51,6 +48,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* InteractAction;
+
+	UPROPERTY(EditAnywhere, Category="Input")
+	UInputAction* ActivateMaskAction;
 	
 public:
 	AGGJ2026Character();
@@ -95,6 +95,8 @@ public:
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
 public:
+
+	FOnMaskStatusChange OnMaskStatusChange;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Interactable")
 	float MaxInteractDistance = 300.f;
@@ -102,6 +104,11 @@ public:
 	TWeakObjectPtr<AActor> CurrentInteractable;
 	UPROPERTY(EditAnywhere, Category="Interactable")
 	TWeakObjectPtr<AActor> LastInteractable;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mask")
+	bool MaskActive = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mask")
+	bool HasMask = false;
 
 	UFUNCTION()
 	void UpdateInteractable();
@@ -113,11 +120,19 @@ public:
 	void TryInteract();
 	void ShowInteractWidget(bool Show);
 
+	UFUNCTION(BlueprintCallable, Category="Interactable")
 	bool IsMaskActive() const { return MaskActive; };
+	void ActivateMask();
 
-private:
-	UPROPERTY(EditAnywhere)
-	bool MaskActive = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Mask")
+	float MaskTimer = 0.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Mask")
+	float MaxMaskTime = 30.f;
+	
+	FTimerHandle MaskTimerHandle;
+
+	void UpdateMaskTimer();
 
 };
 
