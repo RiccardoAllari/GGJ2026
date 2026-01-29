@@ -6,7 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "MOveableObjectsManager.generated.h"
 
-class AMeshChangeObjects;
 class AMoveableObjects;
 
 UCLASS()
@@ -30,13 +29,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<AMoveableObjects*> MoveableObjects;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<AMeshChangeObjects*> MeshChangeObjects;
-
 	UFUNCTION(CallInEditor)
 	void FillMoveableArray();
-
-	UFUNCTION(CallInEditor)
-	void FillMeshChangeArray();
 
 };

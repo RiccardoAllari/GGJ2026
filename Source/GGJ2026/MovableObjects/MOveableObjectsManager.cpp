@@ -6,7 +6,6 @@
 #include "GGJ2026Character.h"
 #include "MoveableObjects.h"
 #include "Kismet/GameplayStatics.h"
-#include "MeshChangeObjects/MeshChangeObjects.h"
 
 // Sets default values
 AMOveableObjectsManager::AMOveableObjectsManager()
@@ -31,14 +30,6 @@ void AMOveableObjectsManager::BeginPlay()
 			Character->OnMaskStatusChange.AddDynamic(Moveable, &AMoveableObjects::UpdatePosAndRot);
 		}
 	}
-
-	for (AMeshChangeObjects* MeshChangeObject : MeshChangeObjects)
-	{
-		if (IsValid(MeshChangeObject))
-		{
-			Character->OnMaskStatusChange.AddDynamic(MeshChangeObject, &AMeshChangeObjects::ChangeMesh);
-		}
-	}
 }
 
 void AMOveableObjectsManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -55,18 +46,6 @@ void AMOveableObjectsManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 			}
 		}
 	}
-
-	if (Character)
-	{
-		for (AMeshChangeObjects* MeshChangeObject : MeshChangeObjects)
-		{
-			if (IsValid(MeshChangeObject))
-			{
-				Character->OnMaskStatusChange.RemoveDynamic(MeshChangeObject, &AMeshChangeObjects::ChangeMesh);
-			}
-		}
-	}
-	
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -87,7 +66,11 @@ void AMOveableObjectsManager::FillMoveableArray()
 	}
 
 	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMoveableObjects::StaticClass(), FoundActors);
+	UGameplayStatics::GetAllActorsOfClass(
+		GetWorld(),
+		AMoveableObjects::StaticClass(),
+		FoundActors
+	);
 
 	for (AActor* Actor : FoundActors)
 	{
@@ -98,31 +81,7 @@ void AMOveableObjectsManager::FillMoveableArray()
 	}
 
 	#if WITH_EDITOR
-		UE_LOG(LogTemp, Warning, TEXT("Collected %d MoveableObjects"), MoveableObjects.Num());
-	#endif
-}
-
-void AMOveableObjectsManager::FillMeshChangeArray()
-{
-	MeshChangeObjects.Empty();
-	
-	if (!GetWorld())
-	{
-		return;
-	}
-
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMeshChangeObjects::StaticClass(), FoundActors);
-
-	for (AActor* Actor : FoundActors)
-	{
-		if (AMeshChangeObjects* Changeable = Cast<AMeshChangeObjects>(Actor))
-		{
-			MeshChangeObjects.Add(Changeable);
-		}
-	}
-	#if WITH_EDITOR
-		UE_LOG(LogTemp, Warning, TEXT("Collected %d MeshChangeableObjects"), MeshChangeObjects.Num());
+		UE_LOG(LogTemp, Log, TEXT("Collected %d MoveableObjects"), MoveableObjects.Num());
 	#endif
 }
 
