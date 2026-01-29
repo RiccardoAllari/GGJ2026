@@ -6,6 +6,7 @@
 #include "GGJ2026Character.h"
 #include "MoveableObjects.h"
 #include "Kismet/GameplayStatics.h"
+#include "MaterialChangeObjects/MaterialChangeObjects.h"
 #include "MeshChangeObjects/MeshChangeObjects.h"
 
 // Sets default values
@@ -39,6 +40,14 @@ void AMOveableObjectsManager::BeginPlay()
 			Character->OnMaskStatusChange.AddDynamic(MeshChangeObject, &AMeshChangeObjects::ChangeMesh);
 		}
 	}
+
+	for (AMaterialChangeObjects* MaterialChangeObject : MaterialChangeObjects)
+	{
+		if (IsValid(MaterialChangeObject))
+		{
+			Character->OnMaskStatusChange.AddDynamic(MaterialChangeObject, &AMaterialChangeObjects::ChangeMaterial);
+		}
+	}
 }
 
 void AMOveableObjectsManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -63,6 +72,17 @@ void AMOveableObjectsManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 			if (IsValid(MeshChangeObject))
 			{
 				Character->OnMaskStatusChange.RemoveDynamic(MeshChangeObject, &AMeshChangeObjects::ChangeMesh);
+			}
+		}
+	}
+
+	if (Character)
+	{
+		for (AMaterialChangeObjects* MaterialChangeObject : MaterialChangeObjects)
+		{
+			if (IsValid(MaterialChangeObject))
+			{
+				Character->OnMaskStatusChange.RemoveDynamic(MaterialChangeObject, &AMaterialChangeObjects::ChangeMaterial);
 			}
 		}
 	}
@@ -99,6 +119,10 @@ void AMOveableObjectsManager::FillMoveableArray()
 
 	#if WITH_EDITOR
 		UE_LOG(LogTemp, Warning, TEXT("Collected %d MoveableObjects"), MoveableObjects.Num());
+		if (!IsRunningGame())
+		{
+			Modify();
+		}
 	#endif
 }
 
@@ -123,6 +147,38 @@ void AMOveableObjectsManager::FillMeshChangeArray()
 	}
 	#if WITH_EDITOR
 		UE_LOG(LogTemp, Warning, TEXT("Collected %d MeshChangeableObjects"), MeshChangeObjects.Num());
+		if (!IsRunningGame())
+		{
+			Modify();
+		}
+	#endif
+}
+
+void AMOveableObjectsManager::FillMaterialChangeArray()
+{
+	MaterialChangeObjects.Empty();
+	
+	if (!GetWorld())
+	{
+		return;
+	}
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMaterialChangeObjects::StaticClass(), FoundActors);
+
+	for (AActor* Actor : FoundActors)
+	{
+		if (AMaterialChangeObjects* Changeable = Cast<AMaterialChangeObjects>(Actor))
+		{
+			MaterialChangeObjects.Add(Changeable);
+		}
+	}
+	#if WITH_EDITOR
+		UE_LOG(LogTemp, Warning, TEXT("Collected %d MaterialChangeObjects"), MaterialChangeObjects.Num());
+		if (!IsRunningGame())
+		{
+			Modify();
+		}
 	#endif
 }
 

@@ -16,13 +16,14 @@ public:
 	// Sets default values for this actor's properties
 	AMeshChangeObjects();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interactable")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MeshChangeable")
 	UStaticMeshComponent* Mesh;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interactable")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MeshChangeable")
 	UPrimitiveComponent* InteractionCollision;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category="Changeable")
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category="MeshChangeable")
 	UStaticMesh* AlternateMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MeshChangeable")
+	bool OnlyInteractWithMaskOn = false;
 
 	UPROPERTY()
 	UStaticMesh* OriginalMesh;

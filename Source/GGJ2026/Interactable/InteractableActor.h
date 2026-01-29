@@ -20,6 +20,8 @@ public:
 	UStaticMeshComponent* Mesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interactable")
 	UPrimitiveComponent* InteractionCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Interactable")
+	bool OnlyInteractWithMaskOn = false;
 
 protected:
 	// Called when the game starts or when spawned

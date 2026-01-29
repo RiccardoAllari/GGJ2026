@@ -16,9 +16,9 @@ public:
 	// Sets default values for this actor's properties
 	AMoveableObjects();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interactable")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Moveable")
 	UStaticMeshComponent* Mesh;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Interactable")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Moveable")
 	UPrimitiveComponent* InteractionCollision;
 
 	UPROPERTY()
@@ -30,6 +30,8 @@ public:
 	FVector MaskedPosition;
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category="Moveable")
 	FRotator MaskedRotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Moveable")
+	bool OnlyInteractWithMaskOn = false;
 
 protected:
 	// Called when the game starts or when spawned

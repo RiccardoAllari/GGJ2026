@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "MOveableObjectsManager.generated.h"
 
+class AMaterialChangeObjects;
 class AMeshChangeObjects;
 class AMoveableObjects;
 
@@ -33,10 +34,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<AMeshChangeObjects*> MeshChangeObjects;
 
-	UFUNCTION(CallInEditor)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AMaterialChangeObjects*> MaterialChangeObjects;
+
+	UFUNCTION(CallInEditor, Category="FillArrays")
 	void FillMoveableArray();
 
-	UFUNCTION(CallInEditor)
+	UFUNCTION(CallInEditor, Category="FillArrays")
 	void FillMeshChangeArray();
+
+	UFUNCTION(CallInEditor, Category="FillArrays")
+	void FillMaterialChangeArray();
 
 };
