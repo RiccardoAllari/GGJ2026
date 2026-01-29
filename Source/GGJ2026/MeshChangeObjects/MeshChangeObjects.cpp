@@ -42,7 +42,6 @@ void AMeshChangeObjects::BeginPlay()
 void AMeshChangeObjects::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AMeshChangeObjects::ChangeMesh(bool MaskStatus)
