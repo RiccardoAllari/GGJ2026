@@ -98,11 +98,11 @@ public:
 
 	FOnMaskStatusChange OnMaskStatusChange;
 	
-	UPROPERTY(EditDefaultsOnly, Category="Interactable")
+	UPROPERTY(EditDefaultsOnly, Category="JamParameters")
 	float MaxInteractDistance = 300.f;
-	UPROPERTY(EditAnywhere, Category="Interactable")
+	UPROPERTY(EditAnywhere, Category="JamParameters")
 	TWeakObjectPtr<AActor> CurrentInteractable;
-	UPROPERTY(EditAnywhere, Category="Interactable")
+	UPROPERTY(EditAnywhere, Category="JamParameters")
 	TWeakObjectPtr<AActor> LastInteractable;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mask")
@@ -120,14 +120,14 @@ public:
 	void TryInteract();
 	void ShowInteractWidget(bool Show);
 
-	UFUNCTION(BlueprintCallable, Category="Interactable")
+	UFUNCTION(BlueprintCallable, Category="Mask")
 	bool IsMaskActive() const { return MaskActive; };
 	void ActivateMask();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Mask")
 	float MaskTimer = 0.f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Mask")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="JamParameters")
 	float MaxMaskTime = 30.f;
 	
 	FTimerHandle MaskTimerHandle;
