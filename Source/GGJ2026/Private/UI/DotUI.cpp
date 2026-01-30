@@ -11,9 +11,11 @@ void UDotUI::SetDotActive(bool Active)
 	if (Active)
 	{
 		DotImage->SetColorAndOpacity(FLinearColor::Red);
+		InteractKey->SetVisibility(ESlateVisibility::Visible);
 	}
 	else
 	{
 		DotImage->SetColorAndOpacity(FLinearColor::White);
+		InteractKey->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
