@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "GGJ2026Character.generated.h"
 
+class UMaskTimer;
 class UInputComponent;
 class USkeletalMeshComponent;
 class UCameraComponent;
@@ -104,6 +105,18 @@ public:
 	TWeakObjectPtr<AActor> CurrentInteractable;
 	UPROPERTY(EditAnywhere, Category="JamParameters")
 	TWeakObjectPtr<AActor> LastInteractable;
+
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	TSubclassOf<UDotUI> InteractDotClass;
+
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	TSubclassOf<UMaskTimer> MaskTimerClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	UDotUI* InteractDotWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	UMaskTimer* MaskTimerWidget;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mask")
 	bool MaskActive = false;
@@ -133,6 +146,12 @@ public:
 	FTimerHandle MaskTimerHandle;
 
 	void UpdateMaskTimer();
+
+	UFUNCTION(BlueprintCallable, Category="Mask")
+	void MaskPickedUp();
+
+protected:
+	virtual void BeginPlay() override;
 
 };
 

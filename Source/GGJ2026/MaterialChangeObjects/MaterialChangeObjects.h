@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interactable/IInteractable.h"
+#include "Interactable/InteractableActor.h"
 #include "MaterialChangeObjects.generated.h"
 
 UCLASS()
-class GGJ2026_API AMaterialChangeObjects : public AActor, public IInteractable
+class GGJ2026_API AMaterialChangeObjects : public AInteractableActor
 {
 	GENERATED_BODY()
 	
@@ -16,10 +17,10 @@ public:
 	// Sets default values for this actor's properties
 	AMaterialChangeObjects();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MaterialChangeable")
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MaterialChangeable")
 	UStaticMeshComponent* Mesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MaterialChangeable")
-	UPrimitiveComponent* InteractionCollision;
+	UPrimitiveComponent* InteractionCollision;*/
 
 	UPROPERTY(EditAnywhere, Category="MaterialChangeable")
 	UMaterialParameterCollection* ParameterCollection;
@@ -32,8 +33,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="MaterialChangeable")
 	bool VisibleWithMask = true;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MaterialChangeable")
-	bool OnlyInteractWithMaskOn = false;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MaterialChangeable")
+	bool OnlyInteractWithMaskOn = false;*/
 
 protected:
 	// Called when the game starts or when spawned

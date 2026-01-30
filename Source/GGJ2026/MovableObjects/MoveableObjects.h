@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interactable/IInteractable.h"
+#include "Interactable/InteractableActor.h"
 #include "MoveableObjects.generated.h"
 
 UCLASS()
-class GGJ2026_API AMoveableObjects : public AActor, public IInteractable
+class GGJ2026_API AMoveableObjects : public AInteractableActor
 {
 	GENERATED_BODY()
 	
@@ -16,10 +17,10 @@ public:
 	// Sets default values for this actor's properties
 	AMoveableObjects();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Moveable")
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Moveable")
 	UStaticMeshComponent* Mesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Moveable")
-	UPrimitiveComponent* InteractionCollision;
+	UPrimitiveComponent* InteractionCollision;*/
 
 	UPROPERTY()
 	FVector StartingPosition;
@@ -30,8 +31,8 @@ public:
 	FVector MaskedPosition;
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category="Moveable")
 	FRotator MaskedRotation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Moveable")
-	bool OnlyInteractWithMaskOn = false;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Moveable")
+	bool OnlyInteractWithMaskOn = false;*/
 
 protected:
 	// Called when the game starts or when spawned

@@ -9,7 +9,7 @@
 AMoveableObjects::AMoveableObjects()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	/*PrimaryActorTick.bCanEverTick = false;
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
@@ -24,7 +24,7 @@ AMoveableObjects::AMoveableObjects()
 	InteractionCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
 	InteractionCollision->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 
-	InteractionCollision->SetGenerateOverlapEvents(false);
+	InteractionCollision->SetGenerateOverlapEvents(false);*/
 }
 
 // Called when the game starts or when spawned

@@ -9,8 +9,12 @@
 #include "InputActionValue.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GGJ2026.h"
+#include "Blueprint/UserWidget.h"
 #include "Interactable/IInteractable.h"
+#include "Interactable/InteractableActor.h"
 #include "Kismet/GameplayStatics.h"
+#include "GGJ2026/Public/UI/DotUI.h"
+#include "GGJ2026/Public/UI/MaskTimer.h"
 
 AGGJ2026Character::AGGJ2026Character()
 {
@@ -141,7 +145,18 @@ void AGGJ2026Character::UpdateInteractable()
 
 		if (HitActor && HitActor -> GetClass()-> ImplementsInterface(UInteractable::StaticClass()))
 		{
-			CurrentInteractable = HitActor;
+			AInteractableActor* InteractableActor = Cast<AInteractableActor>(HitActor);
+			if (InteractableActor->OnlyInteractWithMaskOn)
+			{
+				if (MaskActive)
+				{
+					CurrentInteractable = InteractableActor;
+				}
+			}
+			else
+			{
+				CurrentInteractable = HitActor;
+			}
 		}
 	}
 	
@@ -167,31 +182,20 @@ bool AGGJ2026Character::TraceForInteractable(FHitResult& OutHit)
 	FVector End = Start + Rot.Vector() * MaxInteractDistance;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
-	//Params.bTraceComplex = false;
 
 	bool Hit = GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, Params);
-
-#if WITH_EDITOR
-	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 0.05f, 0, 1.f);
-#endif
 
 	return Hit;
 }
 
 void AGGJ2026Character::TryInteract()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AShooterCharacter::TryInteract"));
-	
-	if (CurrentInteractable.IsValid())
-		UE_LOG(LogTemp, Warning, TEXT("CurrentInteract %s"), *CurrentInteractable->GetName());
-	
 	if (!CurrentInteractable.IsValid()) return;
 	
 	AActor* Actor = CurrentInteractable.Get();
 	
 	if (Actor -> GetClass()->ImplementsInterface(UInteractable::StaticClass()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Sent Interact"));
 		IInteractable::Execute_Interact(Actor, this);
 	}
 }
@@ -203,13 +207,16 @@ void AGGJ2026Character::ShowInteractWidget(bool Show)
 void AGGJ2026Character::OnStartLookingInteractable(AActor* Actor)
 {
 	if (!IsValid(Actor)) return;
-	ShowInteractWidget(true);
+	//ShowInteractWidget(true);
+	InteractDotWidget->SetDotActive(true);
 }
 
 void AGGJ2026Character::OnStopLookingInteractable(AActor* Actor)
 {
 	if (!IsValid(Actor)) return;
-	ShowInteractWidget(false);
+	//ShowInteractWidget(false);
+	InteractDotWidget->SetDotActive(false);
+
 }
 void AGGJ2026Character::ActivateMask()
 {
@@ -229,18 +236,47 @@ void AGGJ2026Character::ActivateMask()
 
 void AGGJ2026Character::UpdateMaskTimer()
 {
-	MaskTimer += 0.05f; // same as timer tick
-	UE_LOG(LogTemp, Warning, TEXT("MaskTimer: %f"), MaskTimer);
-	// Broadcast progress (0 to 1) for UI
+	MaskTimer += 0.05f;
+
 	float Progress = FMath::Clamp(MaskTimer / MaxMaskTime, 0.f, 1.f);
-	//OnMaskProgress.Broadcast(Progress); // Optional: bind to progress bar
+	
+	if (MaskTimerWidget)
+	{
+		MaskTimerWidget->SetProgress(Progress);
+	}
 
 	if (MaskTimer >= MaxMaskTime)
 	{
 		GetWorldTimerManager().ClearTimer(MaskTimerHandle);
 
 		UE_LOG(LogTemp, Warning, TEXT("GAME OVER: Mask Timer reached max"));
-		// Trigger your Game Over logic here
-		//UGameplayStatics::OpenLevel(this, FName("GameOverLevel"));
+		// Game over logic
+	}
+}
+
+void AGGJ2026Character::MaskPickedUp()
+{
+	HasMask = true;
+	if (MaskTimerWidget)
+	{
+		MaskTimerWidget -> AddToViewport();
+	}
+	
+}
+
+void AGGJ2026Character::BeginPlay()
+{
+	Super::BeginPlay();
+	if (InteractDotClass)
+	{
+		InteractDotWidget = CreateWidget<UDotUI>(GetWorld(), InteractDotClass);
+		if (InteractDotWidget)
+		{
+			InteractDotWidget->AddToViewport();
+		}
+	}
+	if (MaskTimerClass)
+	{
+		MaskTimerWidget = CreateWidget<UMaskTimer>(GetWorld(), MaskTimerClass);
 	}
 }

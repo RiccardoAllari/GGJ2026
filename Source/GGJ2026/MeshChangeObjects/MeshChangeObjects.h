@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interactable/IInteractable.h"
+#include "Interactable/InteractableActor.h"
 #include "MeshChangeObjects.generated.h"
 
 UCLASS()
-class GGJ2026_API AMeshChangeObjects : public AActor, public IInteractable
+class GGJ2026_API AMeshChangeObjects : public AInteractableActor
 {
 	GENERATED_BODY()
 	
@@ -16,14 +17,14 @@ public:
 	// Sets default values for this actor's properties
 	AMeshChangeObjects();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MeshChangeable")
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MeshChangeable")
 	UStaticMeshComponent* Mesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="MeshChangeable")
-	UPrimitiveComponent* InteractionCollision;
+	UPrimitiveComponent* InteractionCollision;*/
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category="MeshChangeable")
 	UStaticMesh* AlternateMesh;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MeshChangeable")
-	bool OnlyInteractWithMaskOn = false;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="MeshChangeable")
+	bool OnlyInteractWithMaskOn = false;*/
 
 	UPROPERTY()
 	UStaticMesh* OriginalMesh;
