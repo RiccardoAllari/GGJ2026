@@ -146,16 +146,19 @@ void AGGJ2026Character::UpdateInteractable()
 		if (HitActor && HitActor -> GetClass()-> ImplementsInterface(UInteractable::StaticClass()))
 		{
 			AInteractableActor* InteractableActor = Cast<AInteractableActor>(HitActor);
-			if (InteractableActor->OnlyInteractWithMaskOn)
+			if (!InteractableActor->NeverInteractable)
 			{
-				if (MaskActive)
+				if (InteractableActor->OnlyInteractWithMaskOn)
 				{
-					CurrentInteractable = InteractableActor;
+					if (MaskActive)
+					{
+						CurrentInteractable = InteractableActor;
+					}
 				}
-			}
-			else
-			{
-				CurrentInteractable = HitActor;
+				else
+				{
+					CurrentInteractable = HitActor;
+				}
 			}
 		}
 	}
