@@ -19,6 +19,8 @@ class GGJ2026_API UDotUI : public UUserWidget
 	
 	UPROPERTY(EditAnywhere,meta = (BindWidget))
 	UImage* DotImage;
+	UPROPERTY(EditAnywhere,meta = (BindWidget))
+	UImage* InteractKey;
 	
 public:
 	UFUNCTION(BlueprintCallable, Category="Dot")

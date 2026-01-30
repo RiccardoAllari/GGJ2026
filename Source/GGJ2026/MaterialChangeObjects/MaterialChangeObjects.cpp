@@ -116,5 +116,11 @@ void AMaterialChangeObjects::ChangeMaterial(bool MaskStatus)
 		Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		InteractionCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
+	if (!VisibleWithMask && !MaskStatus)
+	{
+		Mesh->SetVisibility(true);
+		Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		InteractionCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
 }
 

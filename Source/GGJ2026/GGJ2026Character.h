@@ -96,7 +96,8 @@ public:
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
 public:
-
+	
+	UPROPERTY(BlueprintAssignable, Category="Events")
 	FOnMaskStatusChange OnMaskStatusChange;
 	
 	UPROPERTY(EditDefaultsOnly, Category="JamParameters")
@@ -131,7 +132,6 @@ public:
 	void OnStartLookingInteractable(AActor* Actor);
 	void OnStopLookingInteractable(AActor* Actor);
 	void TryInteract();
-	void ShowInteractWidget(bool Show);
 
 	UFUNCTION(BlueprintCallable, Category="Mask")
 	bool IsMaskActive() const { return MaskActive; };
@@ -149,6 +149,26 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Mask")
 	void MaskPickedUp();
+
+	UPROPERTY()
+	bool bMaskTransitionLocked = false;
+
+	FTimerHandle MaskCooldownTimerHandle;
+	UPROPERTY(EditDefaultsOnly, Category="Mask")
+	float MaskCooldownTime = 2.f;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Mask")
+	float FadeDuration = 0.6f;
+
+	// Timer for sequencing fade
+	FTimerHandle MaskFadeTimerHandle;
+
+	UFUNCTION()
+	void FadeOutMask();
+	UFUNCTION()
+	void FadeInMask();
+	UFUNCTION()
+	void UnlockMaskInteraction();
 
 protected:
 	virtual void BeginPlay() override;

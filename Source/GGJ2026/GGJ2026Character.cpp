@@ -200,38 +200,39 @@ void AGGJ2026Character::TryInteract()
 	}
 }
 
-void AGGJ2026Character::ShowInteractWidget(bool Show)
-{
-}
-
 void AGGJ2026Character::OnStartLookingInteractable(AActor* Actor)
 {
 	if (!IsValid(Actor)) return;
-	//ShowInteractWidget(true);
 	InteractDotWidget->SetDotActive(true);
 }
 
 void AGGJ2026Character::OnStopLookingInteractable(AActor* Actor)
 {
 	if (!IsValid(Actor)) return;
-	//ShowInteractWidget(false);
 	InteractDotWidget->SetDotActive(false);
 
 }
+
 void AGGJ2026Character::ActivateMask()
 {
 	if (!HasMask) return;
-	MaskActive = !MaskActive;
-	OnMaskStatusChange.Broadcast(MaskActive);
 
-	if (MaskActive)
+	// Prevent spam
+	if (bMaskTransitionLocked)
+		return;
+
+	bMaskTransitionLocked = true;
+
+	// Disable input
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC)
 	{
-		GetWorldTimerManager().SetTimer(MaskTimerHandle, this, &AGGJ2026Character::UpdateMaskTimer, 0.05f, true);
+		PC->SetIgnoreMoveInput(true);
+		PC->SetIgnoreLookInput(true);
 	}
-	else
-	{
-		GetWorldTimerManager().ClearTimer(MaskTimerHandle);
-	}
+
+	// Start fade out
+	FadeOutMask();
 }
 
 void AGGJ2026Character::UpdateMaskTimer()
@@ -262,6 +263,68 @@ void AGGJ2026Character::MaskPickedUp()
 		MaskTimerWidget -> AddToViewport();
 	}
 	
+}
+
+void AGGJ2026Character::FadeOutMask()
+{
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (!PC) return;
+
+	PC->PlayerCameraManager->StartCameraFade(0.f, 1.f, FadeDuration, FLinearColor::Black, false, true);
+
+	// Wait FadeDuration + small buffer before fade in
+	GetWorldTimerManager().SetTimer(
+		MaskFadeTimerHandle,
+		this,
+		&AGGJ2026Character::FadeInMask,
+		FadeDuration + 0.05f,
+		false
+	);
+}
+
+void AGGJ2026Character::FadeInMask()
+{
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (!PC) return;
+
+	// Activate the mask now
+	MaskActive = !MaskActive;
+	OnMaskStatusChange.Broadcast(MaskActive);
+
+	if (MaskActive)
+	{
+		// Start timer
+		GetWorldTimerManager().SetTimer(MaskTimerHandle, this, &AGGJ2026Character::UpdateMaskTimer, 0.05f, true);
+	}
+	else
+	{
+		GetWorldTimerManager().ClearTimer(MaskTimerHandle);
+	}
+
+	// Fade back in
+	PC->PlayerCameraManager->StartCameraFade(1.f, 0.f, FadeDuration, FLinearColor::Black, false, false);
+
+	// Start cooldown timer
+	GetWorldTimerManager().SetTimer(
+		MaskCooldownTimerHandle,
+		this,
+		&AGGJ2026Character::UnlockMaskInteraction,
+		FadeDuration - 0.5f,
+		false
+	);
+}
+
+void AGGJ2026Character::UnlockMaskInteraction()
+{
+	bMaskTransitionLocked = false;
+
+	// Re-enable input
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC)
+	{
+		PC->SetIgnoreMoveInput(false);
+		PC->SetIgnoreLookInput(false);
+	}
 }
 
 void AGGJ2026Character::BeginPlay()
