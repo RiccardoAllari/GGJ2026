@@ -61,10 +61,6 @@ void AGGJ2026Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AGGJ2026Character::DoJumpStart);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AGGJ2026Character::DoJumpEnd);
-
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AGGJ2026Character::MoveInput);
 
@@ -119,18 +115,6 @@ void AGGJ2026Character::DoMove(float Right, float Forward)
 		AddMovementInput(GetActorRightVector(), Right);
 		AddMovementInput(GetActorForwardVector(), Forward);
 	}
-}
-
-void AGGJ2026Character::DoJumpStart()
-{
-	// pass Jump to the character
-	Jump();
-}
-
-void AGGJ2026Character::DoJumpEnd()
-{
-	// pass StopJumping to the character
-	StopJumping();
 }
 
 void AGGJ2026Character::UpdateInteractable()
@@ -254,7 +238,7 @@ void AGGJ2026Character::UpdateMaskTimer()
 		GetWorldTimerManager().ClearTimer(MaskTimerHandle);
 
 		UE_LOG(LogTemp, Warning, TEXT("GAME OVER: Mask Timer reached max"));
-		// Game over logic
+		GameOver();
 	}
 }
 
@@ -293,15 +277,17 @@ void AGGJ2026Character::FadeInMask()
 	// Activate the mask now
 	MaskActive = !MaskActive;
 	OnMaskStatusChange.Broadcast(MaskActive);
-
+	
 	if (MaskActive)
 	{
 		// Start timer
 		GetWorldTimerManager().SetTimer(MaskTimerHandle, this, &AGGJ2026Character::UpdateMaskTimer, 0.05f, true);
+		MaskTimerWidget->SetMaskImage(true);
 	}
 	else
 	{
 		GetWorldTimerManager().ClearTimer(MaskTimerHandle);
+		MaskTimerWidget->SetMaskImage(false);
 	}
 
 	// Fade back in

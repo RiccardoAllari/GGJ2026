@@ -20,10 +20,18 @@ class GGJ2026_API UMaskTimer : public UUserWidget
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UProgressBar* MaskProgressBar;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	UImage* MaskOff;
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	UImage* MaskOn;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetProgress(float Progress);
 
 	UFUNCTION(BlueprintCallable)
 	void SetProgressColor(const FLinearColor& Color);
+
+	UFUNCTION(BlueprintCallable)
+	void SetMaskImage(bool MaskStatus);
 };

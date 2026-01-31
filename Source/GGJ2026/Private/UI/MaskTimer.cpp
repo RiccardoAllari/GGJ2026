@@ -23,3 +23,17 @@ void UMaskTimer::SetProgressColor(const FLinearColor& Color)
 		MaskProgressBar->SetFillColorAndOpacity(Color);
 	}
 }
+
+void UMaskTimer::SetMaskImage(bool MaskStatus)
+{
+	if (MaskStatus)
+	{
+		MaskOff->SetVisibility(ESlateVisibility::Hidden);
+		MaskOn->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		MaskOff->SetVisibility(ESlateVisibility::Visible);
+		MaskOn->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
