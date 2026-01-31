@@ -48,6 +48,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* ActivateMaskAction;
+
+	UPROPERTY(EditAnywhere, Category="Input")
+	UInputAction* PauseAction;
 	
 public:
 	AGGJ2026Character();
@@ -169,5 +172,8 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category="Input")
 	void GameOver();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category="Input")
+	void Pause();
 };
 

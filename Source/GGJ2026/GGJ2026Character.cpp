@@ -69,6 +69,7 @@ void AGGJ2026Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &AGGJ2026Character::LookInput);
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AGGJ2026Character::TryInteract);
 		EnhancedInputComponent->BindAction(ActivateMaskAction, ETriggerEvent::Triggered, this, &AGGJ2026Character::ActivateMask);
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Triggered, this, &AGGJ2026Character::Pause);
 	}
 	else
 	{
