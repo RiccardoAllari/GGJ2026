@@ -278,6 +278,15 @@ void AGGJ2026Character::FadeInMask()
 	MaskActive = !MaskActive;
 	OnMaskStatusChange.Broadcast(MaskActive);
 	
+	if (MaskActive && MaskOnSound)
+	{
+		UGameplayStatics::PlaySound2D(this, MaskOnSound);
+	}
+	else if (!MaskActive && MaskOffSound)
+	{
+		UGameplayStatics::PlaySound2D(this, MaskOffSound);
+	}
+	
 	if (MaskActive)
 	{
 		// Start timer

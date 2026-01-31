@@ -112,6 +112,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mask")
 	bool HasMask = false;
 
+	UPROPERTY(EditDefaultsOnly, Category="MaskSound")
+	TObjectPtr<USoundBase> MaskOnSound;
+
+	UPROPERTY(EditDefaultsOnly, Category="MaskSound")
+	TObjectPtr<USoundBase>  MaskOffSound;
+
 	UFUNCTION()
 	void UpdateInteractable();
 	UFUNCTION()
