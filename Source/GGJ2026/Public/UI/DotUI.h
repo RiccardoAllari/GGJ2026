@@ -21,6 +21,11 @@ class GGJ2026_API UDotUI : public UUserWidget
 	UImage* DotImage;
 	UPROPERTY(EditAnywhere,meta = (BindWidget))
 	UImage* InteractKey;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* InteractionPng;
+	UPROPERTY(EditAnywhere)
+	UTexture2D* StandardDot;
 	
 public:
 	UFUNCTION(BlueprintCallable, Category="Dot")
