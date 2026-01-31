@@ -10,12 +10,14 @@ void UDotUI::SetDotActive(bool Active)
 
 	if (Active)
 	{
-		DotImage->SetColorAndOpacity(FLinearColor::Red);
+		//DotImage->SetColorAndOpacity(FLinearColor::Red);
+		DotImage ->SetBrushFromTexture(InteractionPng);
 		InteractKey->SetVisibility(ESlateVisibility::Visible);
 	}
 	else
 	{
-		DotImage->SetColorAndOpacity(FLinearColor::White);
+		//DotImage->SetColorAndOpacity(FLinearColor::White);
+		DotImage ->SetBrushFromTexture(StandardDot);
 		InteractKey->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
